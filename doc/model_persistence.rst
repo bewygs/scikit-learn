@@ -10,7 +10,46 @@ Model persistence
 
 After training a scikit-learn model, it is desirable to have a way to persist
 the model for future use without having to retrain. The following sections give
-you some hints on how to persist a scikit-learn model.
+you some hints on how to persist a scikit-learn model through various methods.
+
+- **Python-specific serialization** using `pickle` or `joblib`
+- **A more secure format** with `skops`
+- **Interoperable formats** like `ONNX` and `PMML`
+
+Comparison Between serialization and Interoperable formats
+---------------------------------
+
+Serialization (`pickle`, `joblib` or `skops`) and Interoperable formats (`ONNX`
+and `PMML`) provide means for model persistence and deployment, they cater to
+slightly different needs and scenarios:
+
+**Serialization Methods**:
+   
+- **Pickle**: Python's standard method for object serialization. It's
+straightforward but comes with security concerns and is bound to the Python
+ecosystem.
+- **Joblib**: Optimized for scikit-learn objects, especially those with large
+NumPy arrays. Like pickle, it's Python-centric.
+- **Skops**: Facilitates sharing scikit-learn models, with a focus on
+integration with the Hugging Face Hub. It simplifies sharing and allows for
+API-based inference.
+
+**Interoperable Formats**:
+
+- **ONNX**: A framework-agnostic format designed for broad ML model
+representation. It's portable across platforms and has support for many ML
+frameworks, allowing for model use outside the Python environment.
+- **PMML**: An XML-based standard suitable for representing data mining and
+statistical models. It's both human and machine-readable, making it a good
+choice for model validation and long-term archiving.
+
+Dependencies for serialization
+-----------------------------
+When using the serialization, it's crucial not just to consider
+the scikit-learn version. To ensure compatibility and safely load
+a pickled model ensure that you pin and manage all dependencies of
+scikit-learn. This guarantees that the environment in which the model is loaded
+matches the one in which it was saved.
 
 Python specific serialization
 -----------------------------
@@ -167,3 +206,25 @@ not help in production when performance is critical.
 To convert scikit-learn model to PMML you can use for example `sklearn2pmml
 <https://github.com/jpmml/sklearn2pmml>`_ distributed under the Affero GPLv3
 license.
+
+
+Summary
+-------
+
+1. **Use Case**: 
+    - If you're staying within the Python ecosystem and aim for simplicity,
+    serialization methods like pickle or joblib might suffice. 
+    - If you're aiming for broader deployment scenarios, including outside of
+    Python, or need to switch between ML frameworks, interoperable formats like
+    ONNX or PMML are more suitable.
+
+2. **Security**: 
+    - Traditional serialization methods like pickle come with security
+    warnings, especially when loading untrusted data. 
+    - Skops and interoperable formats may offer safer alternatives, especially
+    when models need to be shared or deployed in various environments.
+
+3. **Portability & Interoperability**: 
+    - Serialization methods are typically bound to Python. In contrast,
+    interoperable formats are designed to bridge between different ML
+    frameworks and deployment platforms.
